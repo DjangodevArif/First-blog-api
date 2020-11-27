@@ -1,0 +1,9 @@
+{% extends 'Blog/base.html' %}
+{% load static %}
+{% block content %}
+<!-- <script>
+    window.location.href="{% url 'login' %}";
+</script> -->
+    <h2>Your now loged out!!</h2>
+    <strong><a href="{% url 'login' %}"> click here</a> for login.</strong>
+{% endblock %}

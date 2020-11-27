@@ -1,0 +1,13 @@
+{% extends 'Blog/base.html' %}
+
+{% block content %}
+    <form method="POST">
+        {% csrf_token %}
+        <h3>
+            Are you sure to delete "{{ object.post_title }}" post???
+        </h3>
+        <button type="submit" class="mb-2 tm-btn btn-danger  tm-prev-next tm-mr-20">delete</button>
+        <a href="{% url 'post' object.id %}" class="mb-2 tm-btn tm-btn-primary tm-prev-next tm-mr-20">Cancel</a>
+    </form>
+    
+{% endblock %}

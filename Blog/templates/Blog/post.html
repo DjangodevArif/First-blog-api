@@ -1,0 +1,190 @@
+{% extends 'Blog/base.html' %}
+{% load static %}
+{% block content %}
+<div class="row tm-row">
+    <div class="col-12">
+        <hr class="tm-hr-primary tm-mb-55">
+        <!-- Video player 1422x800 -->
+        <video width="954" height="535" controls class="tm-mb-40">
+            <source src="video/wheat-field.mp4" type="video/mp4">							  
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+<div class="row tm-row">
+    <div class="col-lg-8 tm-post-col">
+        <div class="tm-post-full">                    
+            <div class="mb-4">
+                <h2 class="pt-2 tm-color-primary tm-post-title">{{post.post_title}}</h2>
+                <p class="tm-mb-40">{{post.post_date}} posted by <a href="{% url 'authorpost' post.post_author %}"> {{ post.post_author }}</a></p>
+                <p>
+                    {{ post.post_detail }}
+                </p>
+                {% if request.user == post.post_author %}
+                    <span class="d-block text-right tm-color-primary" >
+                        <a style="outline: 3px black double ;padding: 2px ;" href="{% url 'update' post.id %}">Update</a>
+                        <a style="outline: 3px red double ;margin-left: 10px; padding: 2px " href="{% url 'delete' post.id %}">Delete</a>
+                    </span>
+                    
+                {% endif %}
+                <span class="d-block text-right tm-color-primary">Creative . Design . Business</span>
+            </div>
+            
+
+
+
+            <!-- Comments -->
+        
+        <div id= 'coment'>
+            <h2 class="tm-color-primary tm-post-title">Comments</h2>
+            <hr class="tm-hr-primary tm-mb-45">
+            
+            <div class="infinite-container">
+            {% for coment in coment_list %}
+            <div class="infinite-item">
+                <div class="tm-comment tm-mb-45 ">
+                    <figure class="tm-comment-figure">
+                        <img src="{{ coment.coment_author.profile.image.url }}" alt="Image" class="mb-2 rounded-circle img-thumbnail">
+                        <figcaption class="tm-color-primary text-center">{{ coment.coment_author.username }}</figcaption>
+                    </figure>
+                    <div>
+                        <p>
+                            {{ coment.coment_detail }}
+                        </p>
+                        <div class="d-flex justify-content-between">
+                            <!-- <a href="" class="tm-color-primary">REPLY  </a> -->
+                            <span class="tm-color-primary">  {{ coment.coment_date }}</span>     
+                        </div>
+                        {% if user.is_authenticated %}
+                            <button onclick="showsubcom({{ coment.id }})">REPLY new</button>
+                            {% if request.user == coment.coment_author %}
+                                <button onclick="showupcom({{ coment.id }})">Update</button>
+                            {% endif %}
+                        {% endif %}
+                        <div id ="sub_{{ coment.id }}" style="display: none;">
+                            <form  method="POST">
+                                {% csrf_token %}
+                                {{ co_form }}
+                                <input type="hidden" name= "comentid" value="{{ coment.id }}">
+                                <button type="submit" name='sub_coment' style="float: left;">Done</button>
+                            </form><button type="submit" onclick="exit({{ coment.id }})" >Close</button><br>
+                        </div>
+                        {% if request.user == coment.coment_author %}
+                        <div id="up_{{ coment.id }}" style="display: none;">
+                            <form  method="POST">
+                                {% csrf_token %}
+                                <!-- {{up_from}} -->
+                                <input type="hidden" name="coment_author" value="{{ coment.coment_author }}">
+                                <input type="hidden" name="comentid" value="{{ coment.id }}"> 
+                                <input type="text" name= 'coment' value="{{ coment.coment_detail }}">
+                                <button type="submit" name='up_coment'>Update</button>
+                            </form><button type="submit" onclick="exit({{ coment.id }})" >Close</button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div> 
+                <!-- #>>>>>>>>>>>> sub comment>> -->
+                    {% if coment.co_coment_set %}
+                        {% for sub_coment in coment.co_coment_set.all %}
+                        <div style="display: block; margin-left: 200px; ">
+                            <div class="tm-comment tm-mb-45" >
+                                <div>
+                                    <p>
+                                        {{ sub_coment.coment_detail }}
+                                    </p>
+                                    <div class="d-flex justify-content-between">
+                                        <!-- <a href="" class="tm-color-primary">REPLY  </a> -->
+                                        <span class="tm-color-primary">  {{ sub_coment.coment_date }}</span>
+                                        
+                                    </div>
+                                </div>
+                                <figure class="tm-comment-figure">
+                                    <img src="{{ sub_coment.coment_author.profile.image.url }}" alt="Image" class="mb-2 rounded-circle img-thumbnail">
+                                    <figcaption class="tm-color-primary text-center">{{ sub_coment.coment_author.username }}</figcaption>
+                                </figure>
+                            </div>
+                        </div>
+                   
+                    {% endfor %}   
+                {% endif %}
+            </div>        
+            {% endfor %}</div>
+        </div>
+        
+        {% if coment_list.has_next %}
+                <a href="?page={{ coment_list.next_page_number }}"  class="mb-2 tm-btn tm-btn-primary tm-prev-next infinite-more-link">Next</a>
+                
+            {% endif %}
+            
+            <!-- coment forms -->
+            {% if user.is_authenticated %}
+                <form id="comentform" method="POST">
+                    {% csrf_token %}
+                    {{ c_form }}
+                    <input type="hidden" name="postid" value="{{ post.id }}">
+                    <button value="comentform" id="newcoment" type="submit" name="coment">Done</button>
+                </form>
+
+                <form action="{% url 'com_del' post.id %}" method ="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete" value="{{ request.user.id }}">
+                    <button type="submit" >Delete</button>
+                </form>
+
+            {% endif %}
+         
+            <script src="..\..\static\Blog\js\jquery.waypoints.min.js"></script>
+            <script src="..\..\static\Blog\js\infinite.min.js"></script>
+            <script>
+                    // three item need with those js file on up: .infinite-container, .infininte-item, .infinite-more-link(pagination needed)
+                var infinite = new Waypoint.Infinite({
+                    element: $('.infinite-container')[0],
+                    offset:'bottom-in-view',
+                    onBeforePageload: function(){
+                    },
+                    onAfterPageLoad: function(){}
+                });
+                 function exit(id){
+                        document.getElementById("sub_"+id).style.display="none";
+                        document.getElementById("up_"+id).style.display="none";
+                    }
+                function showsubcom(id){
+                    // if (document.contains(document.getElementById("sub_"+id))){
+                    //     document.getElementById("sub_"+id).style.display="none";
+                    // }
+                    document.getElementById("sub_"+id).style.display="block";
+                   
+                }
+                function showupcom(id){
+                    document.getElementById("up_"+id).style.display="block";
+                }
+                $(document).on('click','#newcoment',function(e){
+                    e.preventDefault();
+                    var button = $(this).attr('value');
+                    $.ajax({
+                        type: 'POST',
+                        url: '{% url "sub-coment" %}',
+                        data: $('#'+button).serialize(),
+                        cache: false,
+                        success: function (json) {
+                           
+                            $('<div style="margin-left: 200px;"><div class="tm-comment tm-mb-45  "> \
+                                <figure class="tm-comment-figure"> \
+                                <img src=" '+json['image']+ ' " alt="Image" class="mb-2 rounded-circle img-thumbnail"> \
+                                <figcaption class="tm-color-primary text-center">' +json['author']+ '</figcaption> \
+                                </figure> \
+                                <div> \
+                                <p>' +json['coment'] +'</p> \
+                                <div class="d-flex justify-content-between"> \
+                                    <span class="tm-color-primary">' +json['date'] +'</span>     \
+                                </div></div></div>').insertBefore('#comentform');
+                        },
+                        error: function(xhr, errmsg, err){
+
+                        }
+                    })
+                })
+
+
+            </script>
+{% endblock %}

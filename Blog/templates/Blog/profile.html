@@ -1,0 +1,55 @@
+<style>
+img{
+        align-self: center;
+}
+</style>
+    <div>
+        <img src="{{ user.profile.image.url }}">
+        <h1>hello!!{{ user.username }}</h1>
+        <i>{{ user.email }}</i>
+        <span>{{ user.profile.country }}</span>
+    </div>
+    <form method="POST" enctype="multipart/form-data">
+        {% if form.errors %}
+            error: Error raise
+        {% endif %}
+        
+        {% if u_form.is_valid and p_form.is_valid %}
+            Update successfull!!
+        {% endif %}
+
+        <!-- {% if p_form.errors %}
+            {{ p_form.image.errors }}gsgfgs
+        {% endif %} -->
+
+        {% csrf_token %}
+        <!-- {% if u_form.is_valid or p_form.is_valid %}
+            Update successfull!!
+        {% endif %} -->
+        {{ u_form.as_p }}
+        {{ p_form.as_p }} 
+        <button type="submit">Update</button>
+    </form>
+    <div>
+    <h3>Friend list</h3>
+    {% for friend in friend_list %}
+        <p>{{ friend }}</p>
+    {% endfor %}
+    </div> 
+    <div style="border: 1px solid crimson;padding: 10px;">
+        <b> if you want to change your password pls click bellow this link</b>
+        <a href="{% url 'password_change' %}">This is link</a> 
+    </div>
+    <div>
+        <h4> Other Profile</h4>
+        {% for profile in other_profile %}
+           <a href="{% url 'authorpost' profile.user %}">{{ profile.user }}</a> <br>
+        {% endfor %}
+    </div>
+   
+    <div>
+        <h3>Waiting for accecpt </h3>
+        {% for request in req %}
+            <p> {{ request }} </p>
+        {% endfor %}
+    </div>

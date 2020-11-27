@@ -1,0 +1,154 @@
+
+<style>
+*{
+    margin: 0px;
+    padding: 0px;
+}
+.body{
+    background-image: url(https://media.istockphoto.com/photos/blue-abstract-background-or-texture-picture-id1138395421?k=6&m=1138395421&s=612x612&w=0&h=bJ1SRWujCgg3QWzkGPgaRiArNYohPl7-Wc4p_Fa_cyA=);
+    background-size: cover; background-repeat: no-repeat;
+    height: 100%;width: 100%;
+
+}
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; width: 100%;
+    flex-direction: column;
+    
+}
+.signup{
+    display: block;
+    align-items:center;
+    text-align: center;
+    border: 2px solid rgb(220, 173, 20);
+    color: white;
+    padding: 5px;
+    margin: auto;
+    font-size: 20px;
+    border-radius: 10px;
+    background-color: rgb(43, 128, 226);
+    cursor: pointer;
+    
+    /* justify-content: flex-end; */
+}
+.signup:hover{
+    color: rgb(43, 128, 226);
+    background-color: white;
+}
+p > label {
+    color: tomato;
+    font-size: 18px;
+    padding: 8px;
+   
+}
+p{
+    margin: 8px 0 ;
+}
+p:nth-child(2) >input{
+    margin-left: 94px;
+}
+p:nth-child(3) >input{
+    margin-left: 125px;
+}
+p:nth-child(4) >input{
+    margin-left: 92px;
+}
+p:nth-child(5) >input{
+    margin-left: 94px;
+}
+p:nth-child(6) >input{
+    margin-left: 100px;
+}
+p:nth-child(9){
+    margin-left: 10px;
+    display: block;
+}
+
+.form_item small{
+    display: none;
+    font-size: 15px;
+    margin-left: 90px;
+    color: rgb(0, 255, 255);
+}
+
+p > input{
+    padding: 6px;
+    border-radius: 5px;
+    border: none;
+    /* margin-left: 50px; */
+}
+
+.info{
+    color: yellow;
+    align-items: center;
+    justify-content: center;
+}
+
+.pass_help{
+    display: none;
+    font-size: 15px;
+    color: black;
+    background-color: greenyellow;
+}
+.form_item .error{
+    color: rgb(218, 49, 49);
+    border: 2px solid red;
+    text-align: center;
+    background-color: white;
+    
+}
+
+
+</style>
+<div class="body" >
+    <div class="container">
+        <div class="form_item">
+            <form method="POST">
+                {% csrf_token %}
+
+                             <!-- form error handanlding  -->
+
+                {% if form.errors %}
+                {% for feild in form %}
+                {% if feild.errors %}
+                <div class="error">
+                    {{feild.errors}}
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+
+                <p><label class="label">{{ form.username.label }}</label>
+                {{ form.username }} </p>
+
+                                    <!-- feild wise error role     -->
+
+                    <!-- <div class="error"> 
+                    {% if form.username.errors %}
+                        {{form.username.errors}}
+                    {% endif %} </div> >>>>>>>>>>>--> 
+                <p><label class="">{{ form.email.label }}</label>
+                {{form.email}} </p> {{form.email.help_text}}
+                    {% if form.username.errors %}
+                    <div class="error"> 
+                        {{form.username.errors}}
+                    </div>
+                    {% endif %} 
+                <p><label class="">{{ form.first_name.label }}</label>
+                {{ form.first_name }} </p> {{form.first_name.help_text}}
+                <p><label class=""> {{ form.last_name.label }} </label>
+                {{ form.last_name }} </p> {{form.last_name.help_text}}
+                <p><label class="pass1"> {{ form.password1.label }} </label>
+                {{ form.password1 }} </p> <small class="pass_help" >{{form.password1.help_text}} </small>
+                <p><label class=""> {{ form.password2.label }} </label>
+                {{ form.password2 }}</p> <small class="do">{{form.password2.help_text}}</small>
+                <button class="signup" type="submit">Sign Up</button>
+            </form>
+        </div>
+        <div class="info">
+            <p>Alrady have a account? <a href="{% url 'login'%}">login</a></p>
+        </div>
+    </div>
+</div>
